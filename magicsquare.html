@@ -1,0 +1,89 @@
+<script>
+let sperms = [];
+let tempArr = [];
+let preMatrix = [1,2,3,4,5,6,7,8,9];
+let n = Math.sqrt(preMatrix.length);
+let getSum = (accumulator, currentValue) => accumulator + currentValue;
+let perfectSum = preMatrix.reduce(getSum);
+
+permute(preMatrix, 0, preMatrix.length -1);
+console.log(sperms);
+
+let s = [4,9,2,3,5,7,8,1,5].toString().split(',').map(Number);
+console.log(getMinCost(sperms, s));
+
+function getMinCost(sperms, input){
+	let minCosts = [];
+	for(let x = 0; x < sperms.length; x++){
+		let tem = [];
+		for(let y = 0; y < input.length; y++){
+			tem.push(Math.abs(input[y]-sperms[x][y]));
+		}		
+		minCosts.push(tem.reduce(getSum));
+		tem = [];
+	}
+	return Math.min(...minCosts);
+}
+
+function permute(arr, start, end) {
+	if(start == end){
+		if(isMagic(arr.slice(0)))
+		sperms.push(arr.slice(0));
+	}
+	else{
+		for(var i = start; i <= end; i++){
+			arr = swap(arr, start, i);
+			permute(arr, start+1, end);
+			arr = swap(arr, start, i);
+		}
+	}
+
+};
+
+function swap(arr, pos1, pos2){
+	var temp = arr[pos1];
+	arr[pos1] = arr[pos2];
+	arr[pos2] = temp;
+	return arr;
+}
+
+function isMagic(arr){
+  var sums = setSums(arr);
+  return sums.every(function(sum) {
+    return sum === perfectSum/n;
+  });
+}
+function setSums(arr){
+var sums = [];
+//columns
+for(let x = 0; x < n; x++){
+  tempArr = [];
+  for(let y = x; y < n*n; y+=3){
+    tempArr.push(arr[y]);
+  }
+  sums.push(tempArr.reduce(getSum));
+
+}
+//rows
+tempArr = [];
+for(let x = 0; x < n*n; x++){
+   tempArr.push(arr[x]);
+  if((x+1)%3 == 0){
+	sums.push(tempArr.reduce(getSum));
+	tempArr = [];
+  }  
+}
+//diagonal
+for(let x = 0; x < n-1; x++){
+  tempArr = [];
+  let inc = x==0?4:2;
+  for(let y = (inc==4?0:inc); (y < n*n && tempArr.length < 3); y+=inc){
+    tempArr.push(arr[y]);
+  }       
+  sums.push(tempArr.reduce(getSum)); 
+ }  
+  
+return sums;
+}
+
+</script>
